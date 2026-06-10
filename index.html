@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kasir Pancong Juara v2.0</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 40px;
+            color: #333;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            width: 380px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            height: fit-content;
+        }
+
+        h2 { color: #1e40af; margin-top: 0; text-align: center; }
+
+        label { 
+            font-weight: 600; 
+            font-size: 0.9em; 
+            display: block; 
+            margin-top: 15px; 
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 5px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            transition: border 0.3s;
+        }
+
+        input:focus { border-color: #2563eb; outline: none; }
+
+        .topping-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            background: #f9fafb;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .topping-item { font-size: 0.85em; display: flex; align-items: center; }
+        .topping-item input { width: auto; margin-right: 8px; }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            background: #f9fafb;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .radio-item { font-size: 0.9em; display: flex; align-items: center; }
+        .radio-item input { width: auto; margin-right: 5px; }
+
+        .btn-group { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .btn-row { display: flex; gap: 10px; }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-print { background: #059669; color: white; }
+        .btn-reset { background: #ef4444; color: white; }
+        button:hover { opacity: 0.9; }
+
+        .receipt {
+            font-family: 'Courier New', Courier, monospace;
+            min-height: 400px;
+        }
+
+        .line { border-top: 1px dashed #444; margin: 12px 0; }
+        .row { display: flex; justify-content: space-between; margin: 2px 0; }
+        .center { text-align: center; }
+        
+        .logo-toko { 
+            width: 80px; 
+            margin-bottom: 5px;
+            filter: drop-shadow(0px 2px 2px rgba(0,0,0,0.1));
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>🍰 Pancong Juara</h2>
+
+    <label>Nama Kasir</label>
+    <input type="text" id="kasir" placeholder="Masukkan nama Anda">
+
+    <label>Varian Menu</label>
+    <select id="menu">
+        <optgroup label="Klasik">
+            <option value="5000">Original Polos - Rp 5.000</option>
+            <option value="7000">Coklat Lumer - Rp 7.000</option>
+            <option value="8000">Keju Melimpah - Rp 8.000</option>
+        </optgroup>
+        <optgroup label="Premium">
+            <option value="10000">Matcha Crunchy - Rp 10.000</option>
+            <option value="12000">Red Velvet Cheese - Rp 12.000</option>
+            <option value="12000">Tiramisu Almond - Rp 12.000</option>
+            <option value="15000">Lotus Biscoff - Rp 15.000</option>
+        </optgroup>
+    </select>
+
+    <label>Jumlah Pesanan</label>
+    <input type="number" id="jumlah" value="1" min="1">
+
+    <label>Ekstra Topping (+)</label>
+    <div class="topping-grid">
+        <div class="topping-item"><input type="checkbox" value="2000" class="top" data-name="Meses"> Meses (+2k)</div>
+        <div class="topping-item"><input type="checkbox" value="3000" class="top" data-name="Keju Parut"> Keju (+3k)</div>
+        <div class="topping-item"><input type="checkbox" value="2500" class="top" data-name="Susu Kental"> Susu (+2.5k)</div>
+        <div class="topping-item"><input type="checkbox" value="4000" class="top" data-name="Almond"> Almond (+4k)</div>
+        <div class="topping-item"><input type="checkbox" value="3000" class="top" data-name="Oreo"> Oreo (+3k)</div>
+        <div class="topping-item"><input type="checkbox" value="5000" class="top" data-name="Ice Cream"> Ice Cream (+5k)</div>
+    </div>
+
+    <label>Layanan</label>
+    <div class="radio-group">
+        <div class="radio-item"><input type="radio" name="layanan" value="Dine In" checked> Dine In</div>
+        <div class="radio-item"><input type="radio" name="layanan" value="Take Away"> Take Away (+2k)</div>
+    </div>
+
+    <label>Metode Pembayaran</label>
+    <select id="metode">
+        <option value="Tunai">Tunai (Cash)</option>
+        <option value="QRIS">QRIS / E-Wallet</option>
+        <option value="Transfer">Transfer Bank</option>
+    </select>
+
+    <label>Diskon Tambahan (Rp)</label>
+    <input type="number" id="diskon_manual" placeholder="0" value="0">
+
+    <label>Uang Pembayaran</label>
+    <input type="number" id="bayar" placeholder="Rp 0">
+
+    <div class="btn-group">
+        <div class="btn-row">
+            <button class="btn-primary" onclick="hitung()">Cek Out</button>
+            <button class="btn-print" onclick="window.print()">Cetak</button>
+        </div>
+        <button class="btn-reset" onclick="resetForm()">Pesanan Baru (Reset)</button>
+    </div>
+</div>
+
+<div class="card receipt" id="output">
+    <div class="center" style="color: #ccc; margin-top: 150px;">
+        Struk akan muncul di sini...
+    </div>
+</div>
+
+<script>
+function formatRupiah(angka) {
+    return "Rp " + angka.toLocaleString('id-ID');
+}
+
+function resetForm() {
+    document.getElementById("kasir").value = "";
+    document.getElementById("jumlah").value = "1";
+    document.getElementById("bayar").value = "";
+    document.getElementById("diskon_manual").value = "0";
+    document.getElementById("menu").selectedIndex = 0;
+    document.getElementById("metode").selectedIndex = 0;
+    
+    const checkboxes = document.querySelectorAll(".top");
+    checkboxes.forEach(cb => cb.checked = false);
+
+    document.querySelector('input[name="layanan"][value="Dine In"]').checked = true;
+    
+    document.getElementById("output").innerHTML = `
+        <div class="center" style="color: #ccc; margin-top: 150px;">
+            Struk akan muncul di sini...
+        </div>`;
+}
+
+function hitung() {
+    const kasir = document.getElementById("kasir").value;
+    if (!kasir) {
+        alert("Mohon isi nama kasir terlebih dahulu!");
+        return;
+    }
+
+    const menu = document.getElementById("menu");
+    const namaMenu = menu.options[menu.selectedIndex].text.split('-')[0].trim();
+    const hargaMenu = parseInt(menu.value);
+    const jumlah = parseInt(document.getElementById("jumlah").value);
+    const bayar = parseInt(document.getElementById("bayar").value) || 0;
+    const metode = document.getElementById("metode").value;
+    const diskonManual = parseInt(document.getElementById("diskon_manual").value) || 0;
+    
+    const layanan = document.querySelector('input[name="layanan"]:checked').value;
+    const biayaPacking = (layanan === "Take Away") ? 2000 : 0;
+
+    const toppingEls = document.querySelectorAll(".top:checked");
+    let toppingList = [];
+    let totalTop = 0;
+
+    toppingEls.forEach(el => {
+        let nama = el.getAttribute('data-name');
+        let harga = parseInt(el.value);
+        toppingList.push({nama, harga});
+        totalTop += harga;
+    });
+
+    const subtotal = ((hargaMenu + totalTop) * jumlah) + biayaPacking;
+    
+    // Hitung diskon otomatis (belanja > 50rb)
+    const diskonOtomatis = subtotal >= 50000 ? subtotal * 0.1 : 0;
+    
+    // Total diskon adalah gabungan otomatis + manual
+    const totalDiskon = diskonOtomatis + diskonManual;
+    
+    const total = subtotal - totalDiskon;
+    const kembali = bayar - total;
+
+    if (bayar < total) {
+        alert("Uang pembayaran kurang!");
+        return;
+    }
+
+    const tgl = new Date();
+    const kode = "PJ-" + Date.now().toString().slice(-6);
+
+    let html = `
+    <div class="center">
+        <img class="logo-toko" src="https://cdn-icons-png.flaticon.com/512/992/992717.png" alt="Logo">
+        <h3 style="margin:0; letter-spacing: 2px;">PANCONG JUARA</h3>
+        <small>Jl. Haji Komaruddin No. 10</small><br>
+        <small>WhatsApp: 0857-8392-3022</small>
+    </div>
+
+    <div class="line"></div>
+
+    <div class="row">
+        <span>No: ${kode}</span>
+        <span>Kasir: ${kasir}</span>
+    </div>
+    <div class="row">
+        <span>${tgl.toLocaleDateString()}</span>
+        <span>${tgl.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+    </div>
+
+    <div class="line"></div>
+
+    <div class="row">
+        <b>${namaMenu}</b>
+        <span>(${layanan})</span>
+    </div>
+    <div class="row">
+        <span>${jumlah} x ${formatRupiah(hargaMenu)}</span>
+        <span>${formatRupiah(hargaMenu * jumlah)}</span>
+    </div>
+    `;
+
+    toppingList.forEach(t => {
+        html += `
+        <div style="font-size: 0.9em; color: #555;">
+            + ${t.nama}
+            <div class="row">
+                <span>${jumlah} x ${formatRupiah(t.harga)}</span>
+                <span>${formatRupiah(t.harga * jumlah)}</span>
+            </div>
+        </div>`;
+    });
+
+    if (biayaPacking > 0) {
+        html += `
+        <div class="row" style="font-size: 0.9em; color: #555;">
+            <span>Biaya Packing (Take Away)</span>
+            <span>${formatRupiah(biayaPacking)}</span>
+        </div>`;
+    }
+
+    html += `
+    <div class="line"></div>
+
+    <div class="row"><span>Subtotal</span><span>${formatRupiah(subtotal)}</span></div>
+    
+    ${diskonOtomatis > 0 ? `<div class="row"><span>Diskon Otomatis (10%)</span><span>-${formatRupiah(diskonOtomatis)}</span></div>` : ''}
+    
+    ${diskonManual > 0 ? `<div class="row"><span>Diskon Manual</span><span>-${formatRupiah(diskonManual)}</span></div>` : ''}
+
+    <div class="row" style="font-size: 1.1em;"><b>TOTAL</b><b>${formatRupiah(total)}</b></div>
+    
+    <div class="row"><span>Metode</span><span>${metode}</span></div>
+    <div class="row"><span>Bayar</span><span>${formatRupiah(bayar)}</span></div>
+    <div class="row"><span>Kembali</span><span>${formatRupiah(kembali)}</span></div>
+
+    <div class="line"></div>
+
+    <div class="center">
+        Terima kasih atas kunjungannya!<br>
+        <i>"Pancong Juara, Obatnya Badmood"</i>
+    </div>
+    `;
+
+    document.getElementById("output").innerHTML = html;
+}
+</script>
+
+</body>
+</html>
